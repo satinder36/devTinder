@@ -4,17 +4,15 @@ const connectDb = require("./config/database");
 const { adminAuth, userAuth } = require("./middlewares/auth");
 const { User } = require("./models/user");
 
-app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Satinder",
-    lastName: "Singh",
-  });
+app.use(express.json());
 
+app.post("/signup", async (req, res) => {
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("USer added succ");
   } catch (err) {
-    res.staus(400).send("Something went wrong");
+    res.status(400).send("Error saving the user:" + err.message);
   }
 });
 
