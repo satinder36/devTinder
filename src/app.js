@@ -1,18 +1,52 @@
 const express = require("express");
 const app = express();
+const bcrypt = require("bcrypt");
+const { User } = require("./models/user");
 const connectDb = require("./config/database");
 const { adminAuth, userAuth } = require("./middlewares/auth");
-const { User } = require("./models/user");
+const { validationSignUpData } = require("./utils/validation");
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
   try {
+    validationSignUpData(req);
+    const { firstName, lastName, emailId, password, age, gender } = req.body;
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      age,
+      gender,
+      password: passwordHash,
+    });
+
     await user.save();
-    res.send("USer added succ");
+    res.send("User added successfully");
   } catch (err) {
     res.status(400).send("Error saving the user:" + err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    const user = await User.findOne({ emailId });
+
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (isValidPassword) {
+      res.send("User logged in");
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong " + err.message);
   }
 });
 
@@ -54,18 +88,40 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
   const data = req.body;
   // returnDocument: "after" , default is "before", it returns the update value either before
   // or after based on the returnDocument set value,its optional param
+
   try {
+    const ALLOWED_UPDATE = [
+      "photoUrl",
+      "about",
+      "gender",
+      "age",
+      "skills",
+      "firstName",
+      "lastName",
+    ];
+    // const isUpdateAllowed = Object.keys(data).every((key) =>
+    //   ALLOWED_UPDATE.includes(key)
+    // );
+
+    const invalidFields = Object.keys(data).filter(
+      (key) => !ALLOWED_UPDATE.includes(key)
+    );
+
+    if (invalidFields.length) {
+      throw new Error("Update is not allowed " + invalidFields.join(", "));
+    }
     const dataUpdate = await User.findByIdAndUpdate(userId, data, {
       returnDocument: "after",
+      runValidators: true,
     });
     res.send(dataUpdate);
   } catch (err) {
-    res.status(400).send("Something went wrong" + err.message);
+    res.status(400).send("Something went wrong " + err.message);
   }
 });
 
