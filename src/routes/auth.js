@@ -50,4 +50,13 @@ appRouter.post("/login", async (req, res) => {
   }
 });
 
+appRouter.post("/logout", async (req, res) => {
+  try {
+    res.cookie("token", null, { expires: new Date() });
+    res.send("logout successfully");
+  } catch (err) {
+    res.status(400).send("Something went wrong " + err.message);
+  }
+});
+
 module.exports = appRouter;

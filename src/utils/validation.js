@@ -11,4 +11,15 @@ const validationSignUpData = (req) => {
   }
 };
 
-module.exports = { validationSignUpData };
+const validateEditProfileData = (req) => {
+  const data = req.body;
+  const DISALLOWED_UPDATE_FIELDS = ["role", "emailId", "password", "createdAt"];
+
+  const isEditAllowed = Object.keys(data).every(
+    (field) => !DISALLOWED_UPDATE_FIELDS.includes(field)
+  );
+
+  return isEditAllowed;
+};
+
+module.exports = { validationSignUpData, validateEditProfileData };
