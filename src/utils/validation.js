@@ -22,4 +22,25 @@ const validateEditProfileData = (req) => {
   return isEditAllowed;
 };
 
-module.exports = { validationSignUpData, validateEditProfileData };
+const validatePasswordData = (req, res) => {
+  const data = req;
+  console.log("data", data);
+  const ALLOWED_PASSWORD_FIELDS = ["currentPassword", "newPassword"];
+
+  const checkArray = Array(ALLOWED_PASSWORD_FIELDS.length).fill(false);
+
+  const isPasswordAllowed = Object.keys(data).forEach((field, index) => {
+    if (ALLOWED_PASSWORD_FIELDS.includes(field)) {
+      checkArray[index] = true;
+    }
+  });
+
+  console.log(checkArray, "checkkk");
+  return true;
+};
+
+module.exports = {
+  validationSignUpData,
+  validateEditProfileData,
+  validatePasswordData,
+};
