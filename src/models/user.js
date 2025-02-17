@@ -50,6 +50,7 @@ const userSchema = new Schema({
     //   },
     //   message: (props) => `Invalid email address: ${props.value}`,
     // },
+    // select: false, // this is for to avoid sending this field when select() is used
   },
   password: {
     type: String,

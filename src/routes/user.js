@@ -39,7 +39,6 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("fromUserId", USER_SAFE_DATA)
       .populate("toUserId", USER_SAFE_DATA);
 
-    console.log(connectionRequests, " connnn");
     const data = connectionRequests.map((row) => {
       if (row?.fromUserId?._id.equals(loggedInUser?._id)) {
         return row?.toUserId;
@@ -47,7 +46,6 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       return row?.fromUserId;
     });
 
-    console.log("data", data);
     res.json({ data });
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
@@ -62,8 +60,6 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     limit = limit > 50 ? 50 : limit;
     const skip = (page - 1) * limit;
 
-    console.log("skip", skip);
-    console.log("limit", limit);
     const loggedInUser = req.user;
     const connectionRequests = await ConnectionRequest.find({
       $or: [
