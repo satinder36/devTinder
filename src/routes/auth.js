@@ -48,7 +48,7 @@ appRouter.post("/login", async (req, res) => {
       throw new Error("Invalid Credentials");
     }
   } catch (err) {
-    res.status(400).send("Something went wrong " + err.message);
+    res.status(400).send({ message: err.message, success: false });
   }
 });
 
