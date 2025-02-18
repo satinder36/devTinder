@@ -1,10 +1,10 @@
 const express = require("express");
-const appRouter = express.Router();
+const authRouter = express.Router();
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user");
 const { validationSignUpData } = require("../utils/validation");
 
-appRouter.post("/signup", async (req, res) => {
+authRouter.post("/signup", async (req, res) => {
   try {
     validationSignUpData(req);
     const { firstName, lastName, emailId, password, age, gender } = req.body;
@@ -19,14 +19,21 @@ appRouter.post("/signup", async (req, res) => {
       password: passwordHash,
     });
 
-    await user.save();
-    res.send("User added successfully");
+    const savedUser = await user.save();
+
+    const token = await savedUser.getJwt();
+    // delete savedUser?.password;
+
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.send({ message: "User added successfully", data: savedUser });
   } catch (err) {
     res.status(400).send("Error saving the user:" + err.message);
   }
 });
 
-appRouter.post("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body;
     const user = await User.findOne({ emailId });
@@ -52,7 +59,7 @@ appRouter.post("/login", async (req, res) => {
   }
 });
 
-appRouter.post("/logout", async (req, res) => {
+authRouter.post("/logout", async (req, res) => {
   try {
     res.cookie("token", null, { expires: new Date() });
     res.send("logout successfully");
@@ -61,4 +68,4 @@ appRouter.post("/logout", async (req, res) => {
   }
 });
 
-module.exports = appRouter;
+module.exports = authRouter;

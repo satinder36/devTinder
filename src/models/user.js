@@ -15,7 +15,7 @@ const userSchema = new Schema({
   },
   //   lastName: String, // String is shorthand for {type: String}
   lastName: { type: String, maxLength: 50, trim: true },
-  age: { type: Number, required: true, min: 18, max: 100, trim: true },
+  age: { type: Number, min: 18, max: 100, trim: true },
   gender: {
     type: String,
     //Ist approach
