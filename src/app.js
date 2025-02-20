@@ -3,6 +3,7 @@ const app = express();
 const connectDb = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 app.use(
   cors({
@@ -10,6 +11,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -87,7 +89,7 @@ app.use("/", userRouter);
 connectDb()
   .then(() => {
     console.log("connected");
-    app.listen(3000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("listening"); //callback func is optional
     });
   })
