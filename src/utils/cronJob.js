@@ -18,8 +18,6 @@ cron.schedule("* 8 * * *", async () => {
       },
     }).populate("toUserId", "emailId");
 
-    console.log("pendingRequests ", pendingRequests);
-
     const listOfEmails = [
       ...new Set(pendingRequests.map((row) => row?.toUserId?.emailId)),
     ];
@@ -30,12 +28,11 @@ cron.schedule("* 8 * * *", async () => {
           "New Friend Requests pending for " + email,
           "Ther eare so many frined reuests pending, please login to DevTinder.in and accept or reject the reqyests."
         );
-        console.log(res);
       } catch (err) {
-        console.log(err);
+        console.error(err);
       }
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 });

@@ -99,7 +99,7 @@ userSchema.methods.getJwt = async function () {
     });
     return token;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 
@@ -113,7 +113,7 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
     );
     return isValidPassword;
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 

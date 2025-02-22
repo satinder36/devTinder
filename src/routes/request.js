@@ -62,8 +62,6 @@ requestRouter.post(
         req.user.firstName + " is " + status + " in " + toUser.firstName
       );
 
-      console.log("emailRes", emailRes);
-
       res.json({
         message: "Action taken successfully",
         data,

@@ -44,7 +44,6 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 profileRouter.patch("/profile/updatePassword", userAuth, async (req, res) => {
   try {
     if (validatePasswordData(req.body)) {
-      console.log("here");
       res.send("ok");
     }
   } catch (err) {
